@@ -1,0 +1,13 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.caches
+*.jks
+*.keystore
+# google-services.json contains secrets — add manually, never commit
+/app/google-services.json
