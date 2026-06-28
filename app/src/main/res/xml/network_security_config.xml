@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow HTTP to local dev backend (emulator loopback + common LAN ranges) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="true">192.168</domain>
+        <domain includeSubdomains="true">10.0</domain>
+        <domain includeSubdomains="true">172.16</domain>
+    </domain-config>
+</network-security-config>

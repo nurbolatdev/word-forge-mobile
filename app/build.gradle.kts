@@ -20,6 +20,16 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Read BASE_URL from local.properties (defaults to Android emulator loopback)
+        val localProps = java.util.Properties().also { props ->
+            val f = rootProject.file("local.properties")
+            if (f.exists()) props.load(f.inputStream())
+        }
+        buildConfigField(
+            "String", "BASE_URL",
+            "\"${localProps.getProperty("BASE_URL", "http://10.0.2.2:8080/")}\""
+        )
     }
 
     buildTypes {
@@ -40,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.13"

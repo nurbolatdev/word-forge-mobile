@@ -34,7 +34,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.wordforge.domain.model.WordList
 import com.wordforge.ui.navigation.NavRoutes
 import com.wordforge.ui.theme.Joy
 

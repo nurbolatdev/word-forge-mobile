@@ -33,7 +33,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
@@ -414,7 +414,7 @@ private fun AddWordSheet(
             }
 
             if (searchResult != null) {
-                Divider()
+                HorizontalDivider()
                 Text(
                     "Choose translations:",
                     style = MaterialTheme.typography.labelMedium,

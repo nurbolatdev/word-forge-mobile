@@ -1,5 +1,6 @@
 package com.wordforge.di
 
+import com.wordforge.BuildConfig
 import com.wordforge.data.remote.AuthApi
 import com.wordforge.data.remote.ListsApi
 import com.wordforge.data.remote.QuizApi
@@ -14,19 +15,11 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Qualifier
 import javax.inject.Singleton
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class AuthInterceptorOkHttp
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
-    // Replace x.x with your machine's local IP when running the backend
-    private const val BASE_URL = "http://192.168.1.100:8080/"
 
     @Provides
     @Singleton
@@ -58,7 +51,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
