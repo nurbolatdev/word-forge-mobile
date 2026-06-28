@@ -5,4 +5,10 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
+
+    <style name="Theme.WordForge.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FAFAF9</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.WordForge</item>
+    </style>
 </resources>

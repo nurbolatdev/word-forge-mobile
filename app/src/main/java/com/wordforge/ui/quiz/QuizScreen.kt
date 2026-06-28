@@ -2,6 +2,8 @@ package com.wordforge.ui.quiz
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -175,6 +177,7 @@ private fun McqContent(
     onSelect: (Long) -> Unit,
     onNext: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -209,7 +212,12 @@ private fun McqContent(
                         else -> MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
                     }
                     FilledTonalButton(
-                        onClick = { if (phase == QuizPhase.QUESTION) onSelect(option.translationId) },
+                        onClick = {
+                            if (phase == QuizPhase.QUESTION) {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                onSelect(option.translationId)
+                            }
+                        },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.filledTonalButtonColors(containerColor = containerColor),
                         enabled = phase == QuizPhase.QUESTION
@@ -241,6 +249,7 @@ private fun TypedContent(
     onSubmit: (String) -> Unit,
     onNext: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
     var typed by rememberSaveable(question.cardId) { mutableStateOf("") }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -293,7 +302,10 @@ private fun TypedContent(
 
         if (phase == QuizPhase.QUESTION) {
             Button(
-                onClick = { onSubmit(typed.trim()) },
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onSubmit(typed.trim())
+                },
                 enabled = typed.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             ) { Text("Check") }
