@@ -1,5 +1,9 @@
 package com.wordforge.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -71,7 +75,23 @@ fun NavGraph(navController: NavHostController, startDestination: String) {
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            enterTransition = {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(280)) +
+                        fadeIn(tween(280))
+            },
+            exitTransition = {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(220)) +
+                        fadeOut(tween(220))
+            },
+            popEnterTransition = {
+                slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(280)) +
+                        fadeIn(tween(280))
+            },
+            popExitTransition = {
+                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(220)) +
+                        fadeOut(tween(220))
+            }
         ) {
             // Auth graph — Phone and Verify share one AuthViewModel
             navigation(startDestination = NavRoutes.PHONE, route = NavRoutes.AUTH_GRAPH) {
