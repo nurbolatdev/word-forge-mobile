@@ -136,7 +136,14 @@ fun ListsScreen(navController: NavController, viewModel: ListsViewModel = hiltVi
                                 wordList = wordList,
                                 onDelete = { viewModel.deleteList(wordList.id) },
                                 onClick = {
-                                    navController.navigate(NavRoutes.listDetail(wordList.id))
+                                    navController.navigate(
+                                        NavRoutes.listDetail(
+                                            listId = wordList.id,
+                                            sourceLang = wordList.sourceLang,
+                                            targetLang = wordList.targetLang,
+                                            title = wordList.title
+                                        )
+                                    )
                                 }
                             )
                         }

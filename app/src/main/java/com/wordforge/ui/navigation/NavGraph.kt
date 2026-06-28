@@ -33,14 +33,17 @@ object NavRoutes {
 
     const val MAIN_GRAPH = "main"
     const val LISTS = "main/lists"
-    const val LIST_DETAIL = "main/list/{listId}"
+    const val LIST_DETAIL = "main/list/{listId}/{sourceLang}/{targetLang}/{listTitle}"
     const val QUIZ_SELECT = "main/quiz/select"
     const val QUIZ_MODE = "main/quiz/mode"
     const val QUIZ_PLAY = "main/quiz/play"
     const val PROFILE = "main/profile"
 
-    fun listDetail(listId: Long) = "main/list/$listId"
+    fun listDetail(listId: Long, sourceLang: String, targetLang: String, title: String) =
+        "main/list/$listId/$sourceLang/$targetLang/${title.encodeForNav()}"
 }
+
+private fun String.encodeForNav() = java.net.URLEncoder.encode(this, "UTF-8")
 
 private val bottomBarRoutes = setOf(
     NavRoutes.LISTS,
@@ -89,10 +92,27 @@ fun NavGraph(navController: NavHostController, startDestination: String) {
                 }
                 composable(
                     route = NavRoutes.LIST_DETAIL,
-                    arguments = listOf(navArgument("listId") { type = NavType.LongType })
+                    arguments = listOf(
+                        navArgument("listId") { type = NavType.LongType },
+                        navArgument("sourceLang") { type = NavType.StringType },
+                        navArgument("targetLang") { type = NavType.StringType },
+                        navArgument("listTitle") { type = NavType.StringType }
+                    )
                 ) { backStack ->
-                    val listId = backStack.arguments?.getLong("listId") ?: return@composable
-                    ListDetailScreen(navController, listId)
+                    val args = backStack.arguments ?: return@composable
+                    val listId = args.getLong("listId")
+                    val sourceLang = args.getString("sourceLang") ?: "EN"
+                    val targetLang = args.getString("targetLang") ?: "RU"
+                    val listTitle = java.net.URLDecoder.decode(
+                        args.getString("listTitle") ?: "", "UTF-8"
+                    )
+                    ListDetailScreen(
+                        navController = navController,
+                        listId = listId,
+                        listTitle = listTitle,
+                        sourceLang = sourceLang,
+                        targetLang = targetLang
+                    )
                 }
                 composable(NavRoutes.QUIZ_SELECT) {
                     // Stage 4
