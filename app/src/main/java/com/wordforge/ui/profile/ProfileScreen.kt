@@ -28,7 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -68,6 +70,12 @@ fun ProfileScreen(
                 TextButton(onClick = { showSignOutDialog = false }) { Text("Cancel") }
             }
         )
+    }
+
+    val context = LocalContext.current
+    val versionName = remember {
+        try { context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0" }
+        catch (e: Exception) { "1.0" }
     }
 
     Scaffold(
@@ -127,6 +135,16 @@ fun ProfileScreen(
             ) {
                 Text("Sign out", color = ErrorRed)
             }
+
+            Spacer(Modifier.weight(1f))
+
+            Text(
+                text = "WordForge v$versionName",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
         }
     }
 }

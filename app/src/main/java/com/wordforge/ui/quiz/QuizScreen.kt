@@ -1,7 +1,10 @@
 package com.wordforge.ui.quiz
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.foundation.layout.Column
@@ -36,6 +39,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,6 +62,28 @@ fun QuizScreen(viewModel: QuizViewModel, navController: NavController) {
     val phase by viewModel.phase.collectAsStateWithLifecycle()
     val question by viewModel.question.collectAsStateWithLifecycle()
     val answerResult by viewModel.answerResult.collectAsStateWithLifecycle()
+    var showExitDialog by remember { mutableStateOf(false) }
+
+    val inProgress = phase == QuizPhase.QUESTION || phase == QuizPhase.RESULT
+    BackHandler(enabled = inProgress) { showExitDialog = true }
+
+    if (showExitDialog) {
+        AlertDialog(
+            onDismissRequest = { showExitDialog = false },
+            title = { Text("Exit quiz?") },
+            text = { Text("Your progress in this round will be lost.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showExitDialog = false
+                    viewModel.resetQuiz()
+                    navController.popBackStack(NavRoutes.QUIZ_SELECT, false)
+                }) { Text("Exit", color = ErrorRed) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExitDialog = false }) { Text("Continue") }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
