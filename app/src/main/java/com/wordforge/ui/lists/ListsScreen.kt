@@ -35,7 +35,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.PullToRefreshContainer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -45,7 +44,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.material3.rememberPullToRefreshState
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,7 +53,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -81,14 +78,6 @@ fun ListsScreen(navController: NavController, viewModel: ListsViewModel = hiltVi
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var showSheet by rememberSaveable { mutableStateOf(false) }
-    val pullState = rememberPullToRefreshState()
-
-    LaunchedEffect(pullState.isRefreshing) {
-        if (pullState.isRefreshing) viewModel.loadLists()
-    }
-    LaunchedEffect(isLoading) {
-        if (!isLoading) pullState.endRefresh()
-    }
 
     // 401 → navigate to auth
     LaunchedEffect(Unit) {
@@ -131,7 +120,6 @@ fun ListsScreen(navController: NavController, viewModel: ListsViewModel = hiltVi
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .nestedScroll(pullState.nestedScrollConnection)
         ) {
             when {
                 isLoading && lists.isEmpty() -> {
@@ -173,10 +161,6 @@ fun ListsScreen(navController: NavController, viewModel: ListsViewModel = hiltVi
                     }
                 }
             }
-            PullToRefreshContainer(
-                state = pullState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 
