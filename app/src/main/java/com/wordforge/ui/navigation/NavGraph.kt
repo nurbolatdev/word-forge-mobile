@@ -2,20 +2,29 @@ package com.wordforge.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.wordforge.ui.auth.AuthViewModel
 import com.wordforge.ui.auth.PhoneScreen
 import com.wordforge.ui.auth.VerifyScreen
+import com.wordforge.ui.components.BottomNavBar
+import com.wordforge.ui.lists.ListDetailScreen
+import com.wordforge.ui.lists.ListsScreen
 
 object NavRoutes {
     const val AUTH_GRAPH = "auth"
@@ -33,36 +42,74 @@ object NavRoutes {
     fun listDetail(listId: Long) = "main/list/$listId"
 }
 
+private val bottomBarRoutes = setOf(
+    NavRoutes.LISTS,
+    NavRoutes.QUIZ_SELECT,
+    NavRoutes.PROFILE
+)
+
 @Composable
 fun NavGraph(navController: NavHostController, startDestination: String) {
-    NavHost(navController = navController, startDestination = startDestination) {
+    val currentEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentEntry?.destination?.route
+    val showBottomBar = currentRoute in bottomBarRoutes
 
-        // Auth graph — both screens share the same AuthViewModel instance
-        navigation(startDestination = NavRoutes.PHONE, route = NavRoutes.AUTH_GRAPH) {
-            composable(NavRoutes.PHONE) { entry ->
-                val graphEntry = remember(entry) {
-                    navController.getBackStackEntry(NavRoutes.AUTH_GRAPH)
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) BottomNavBar(navController)
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            // Auth graph — Phone and Verify share one AuthViewModel
+            navigation(startDestination = NavRoutes.PHONE, route = NavRoutes.AUTH_GRAPH) {
+                composable(NavRoutes.PHONE) { entry ->
+                    val graphEntry = remember(entry) {
+                        navController.getBackStackEntry(NavRoutes.AUTH_GRAPH)
+                    }
+                    val viewModel: AuthViewModel = hiltViewModel(graphEntry)
+                    PhoneScreen(viewModel, navController)
                 }
-                val viewModel: AuthViewModel = hiltViewModel(graphEntry)
-                PhoneScreen(viewModel, navController)
+                composable(NavRoutes.VERIFY) { entry ->
+                    val graphEntry = remember(entry) {
+                        navController.getBackStackEntry(NavRoutes.AUTH_GRAPH)
+                    }
+                    val viewModel: AuthViewModel = hiltViewModel(graphEntry)
+                    VerifyScreen(viewModel, navController)
+                }
             }
-            composable(NavRoutes.VERIFY) { entry ->
-                val graphEntry = remember(entry) {
-                    navController.getBackStackEntry(NavRoutes.AUTH_GRAPH)
+
+            // Main graph
+            navigation(startDestination = NavRoutes.LISTS, route = NavRoutes.MAIN_GRAPH) {
+                composable(NavRoutes.LISTS) {
+                    ListsScreen(navController)
                 }
-                val viewModel: AuthViewModel = hiltViewModel(graphEntry)
-                VerifyScreen(viewModel, navController)
+                composable(
+                    route = NavRoutes.LIST_DETAIL,
+                    arguments = listOf(navArgument("listId") { type = NavType.LongType })
+                ) { backStack ->
+                    val listId = backStack.arguments?.getLong("listId") ?: return@composable
+                    ListDetailScreen(navController, listId)
+                }
+                composable(NavRoutes.QUIZ_SELECT) {
+                    // Stage 4
+                    PlaceholderScreen("Practice — coming in Stage 4")
+                }
+                composable(NavRoutes.PROFILE) {
+                    // Stage 5
+                    PlaceholderScreen("Profile — coming in Stage 5")
+                }
             }
         }
+    }
+}
 
-        // Main graph — populated in subsequent stages
-        navigation(startDestination = NavRoutes.LISTS, route = NavRoutes.MAIN_GRAPH) {
-            composable(NavRoutes.LISTS) {
-                // Replaced in Stage 2
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("My Lists — coming in Stage 2", style = MaterialTheme.typography.bodyLarge)
-                }
-            }
-        }
+@Composable
+private fun PlaceholderScreen(text: String) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text, style = MaterialTheme.typography.bodyLarge)
     }
 }
