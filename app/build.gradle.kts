@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,7 +24,7 @@ android {
         }
 
         // Read BASE_URL from local.properties (defaults to Android emulator loopback)
-        val localProps = java.util.Properties().also { props ->
+        val localProps = Properties().also { props ->
             val f = rootProject.file("local.properties")
             if (f.exists()) props.load(f.inputStream())
         }
