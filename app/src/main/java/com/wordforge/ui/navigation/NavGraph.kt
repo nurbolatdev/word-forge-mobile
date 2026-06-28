@@ -25,6 +25,7 @@ import com.wordforge.ui.auth.VerifyScreen
 import com.wordforge.ui.components.BottomNavBar
 import com.wordforge.ui.lists.ListDetailScreen
 import com.wordforge.ui.lists.ListsScreen
+import com.wordforge.ui.profile.ProfileScreen
 import com.wordforge.ui.quiz.ListSelectScreen
 import com.wordforge.ui.quiz.ModeSelectScreen
 import com.wordforge.ui.quiz.QuizScreen
@@ -147,8 +148,7 @@ fun NavGraph(navController: NavHostController, startDestination: String) {
                     }
                 }
                 composable(NavRoutes.PROFILE) {
-                    // Stage 5
-                    PlaceholderScreen("Profile — coming in Stage 5")
+                    ProfileScreen(navController)
                 }
             }
         }
