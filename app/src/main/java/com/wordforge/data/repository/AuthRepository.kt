@@ -34,4 +34,6 @@ class AuthRepository @Inject constructor(
         firebaseAuth.signOut()
         tokenManager.clearToken()
     }
+
+    fun getPhoneNumber(): String? = firebaseAuth.currentUser?.phoneNumber
 }
