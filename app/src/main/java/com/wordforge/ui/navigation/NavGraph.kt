@@ -25,6 +25,10 @@ import com.wordforge.ui.auth.VerifyScreen
 import com.wordforge.ui.components.BottomNavBar
 import com.wordforge.ui.lists.ListDetailScreen
 import com.wordforge.ui.lists.ListsScreen
+import com.wordforge.ui.quiz.ListSelectScreen
+import com.wordforge.ui.quiz.ModeSelectScreen
+import com.wordforge.ui.quiz.QuizScreen
+import com.wordforge.ui.quiz.QuizViewModel
 
 object NavRoutes {
     const val AUTH_GRAPH = "auth"
@@ -34,6 +38,7 @@ object NavRoutes {
     const val MAIN_GRAPH = "main"
     const val LISTS = "main/lists"
     const val LIST_DETAIL = "main/list/{listId}/{sourceLang}/{targetLang}/{listTitle}"
+    const val QUIZ_GRAPH = "main/quiz"
     const val QUIZ_SELECT = "main/quiz/select"
     const val QUIZ_MODE = "main/quiz/mode"
     const val QUIZ_PLAY = "main/quiz/play"
@@ -114,9 +119,32 @@ fun NavGraph(navController: NavHostController, startDestination: String) {
                         targetLang = targetLang
                     )
                 }
-                composable(NavRoutes.QUIZ_SELECT) {
-                    // Stage 4
-                    PlaceholderScreen("Practice — coming in Stage 4")
+                // Quiz sub-graph — all 3 screens share one QuizViewModel
+                navigation(
+                    startDestination = NavRoutes.QUIZ_SELECT,
+                    route = NavRoutes.QUIZ_GRAPH
+                ) {
+                    composable(NavRoutes.QUIZ_SELECT) { entry ->
+                        val graphEntry = remember(entry) {
+                            navController.getBackStackEntry(NavRoutes.QUIZ_GRAPH)
+                        }
+                        val viewModel: QuizViewModel = hiltViewModel(graphEntry)
+                        ListSelectScreen(viewModel, navController)
+                    }
+                    composable(NavRoutes.QUIZ_MODE) { entry ->
+                        val graphEntry = remember(entry) {
+                            navController.getBackStackEntry(NavRoutes.QUIZ_GRAPH)
+                        }
+                        val viewModel: QuizViewModel = hiltViewModel(graphEntry)
+                        ModeSelectScreen(viewModel, navController)
+                    }
+                    composable(NavRoutes.QUIZ_PLAY) { entry ->
+                        val graphEntry = remember(entry) {
+                            navController.getBackStackEntry(NavRoutes.QUIZ_GRAPH)
+                        }
+                        val viewModel: QuizViewModel = hiltViewModel(graphEntry)
+                        QuizScreen(viewModel, navController)
+                    }
                 }
                 composable(NavRoutes.PROFILE) {
                     // Stage 5

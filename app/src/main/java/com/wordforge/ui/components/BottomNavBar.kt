@@ -30,8 +30,12 @@ fun BottomNavBar(navController: NavController) {
 
     NavigationBar {
         navItems.forEach { item ->
+            val isSelected = when (item.route) {
+                NavRoutes.QUIZ_SELECT -> currentRoute?.startsWith("main/quiz") == true
+                else -> currentRoute == item.route
+            }
             NavigationBarItem(
-                selected = currentRoute == item.route,
+                selected = isSelected,
                 onClick = {
                     navController.navigate(item.route) {
                         popUpTo(NavRoutes.LISTS) { saveState = true }
